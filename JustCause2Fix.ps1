@@ -22,11 +22,17 @@ else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
 
+# only enable decals when dxck
 # User needs to add these to steam or launch with a a shortcut/ Justcause.exe /commands here
-$userLaunchParameters = @(
-	'x_Jusupov_100percent',
-	'x_worldbin'
-)
+$userLaunchParameters = @{
+	LODFactor    = 1
+	VSync        = 0
+	frameratecap = 60
+	dxadapter    = 0
+	FilmGrain    = 0
+	fovfactor    = 1.0
+	decals       = 0
+}
 
 
 Function Apply-Patches() {
@@ -124,9 +130,8 @@ function Revert-Patches() {
 }
 
 # Delete directx folder
-#/LODFactor=3 /FramerateCap=enabled /dxadapter=0 /FilmGrain=0 /VSync=0 /frameratecap=30  /fovfactor=2
-# /FramerateCap=enabled
-# /RefreshRate=N
+#/LODFactor=3 /FramerateCap=enabled /VSync=0 /frameratecap=60 /dxadapter=0 /FilmGrain=0   /fovfactor=1.5
+
 
 
 # Stability changes
