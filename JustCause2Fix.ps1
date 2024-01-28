@@ -22,6 +22,13 @@ else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
 
+# User needs to add these to steam or launch with a a shortcut/ Justcause.exe /commands here
+$userLaunchParameters = @(
+	'x_Jusupov_100percent',
+	'x_worldbin'
+)
+
+
 Function Apply-Patches() {
 
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
@@ -64,10 +71,18 @@ function Remove-Filmgrain {
 	}
 	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
 
-		Copy-Item $filmgrainPatch\"filmgrain.dds" $currentInstallPath -Force
-
+		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
+		Write-Host 'Applied Filmgrain removal patch'
 	}
 
+
+}
+function Reapply-Filmgrain {
+	# Check for dropzone folder
+	if (Test-Path -Path $currentInstallPath+"\dropzone\filmgrain.dds" ) {
+		Remove-Item $currentInstallPath+"\dropzone\filmgrain.dds" -Force
+		Write-Host 'Applied Filmgrain removal patch'
+	}
 }
 
 function Revert-Patches() {
@@ -109,9 +124,11 @@ function Revert-Patches() {
 }
 
 # Delete directx folder
-
+#/LODFactor=3 /FramerateCap=enabled /dxadapter=0 /FilmGrain=0 /VSync=0 /frameratecap=30  /fovfactor=2
 # /FramerateCap=enabled
 # /RefreshRate=N
+
+
 # Stability changes
 # # Disable dualcore optimiations for async10
 # Download Nvidia Profile Inspector.
@@ -125,30 +142,33 @@ function Revert-Patches() {
 # Significantly impacts performance, recommended only on faster machines.
 # Check install locations
 
-#
-# Download dxvk-"version number".tar.gz.
-# Extract dxgi.dll d3d11.dll and d3d10core.dll to the game installation folder.
-
-# This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
-
 # Bokeh filter and GPU water simulation effects will become unavailable.
+# This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
+function Get-DXVK {
+	$latestReleaseApiUrl = 'https://api.github.com/repos/doitsujin/dxvk/releases/latest'
+	$latestRelease = Invoke-RestMethod -Uri $latestReleaseApiUrl
+	$tagName = $latestRelease.tag_name
 
+	# Releases have other similar filtypes so we need to filter those out
+	# Regex is slow so we look for filenames that dont include the word "native" aka nat.
+	$asset = $latestRelease.assets | Where-Object { $_.name -like '*.tar.gz' -and $_.name -notlike '*-nat*' }
 
-# #Remove file grain
-# Use mod
+	# Constructing the URL of the asset
+	$assetUrl = $asset.browser_download_url
 
-#     Download No More Filmgrain!.
-#     Create dropzone folder into <path-to-game>.
-#     Extract and place filmgrain.dss into dropzone folder.
-function Disable-FilmGrain {
+	# Extracting the asset name from the URL
+	$assetName = $assetUrl -split '/' | Select-Object -Last 1
 
-	# test dlc folder
-	# Check for pc_00.arc and pc_00.tab
-	if (Test-Path -Path $PWD+"\Patches" -and Test-Path -Path $currentInstallPath+"\DLC") {
-		Copy-Item .\Patches\* $currentInstallPath"\archives_32" -Recurse
-		Write-Host 'Copied patch files'
-	}
-	else {
-		Write-Host 'Could not find local patches folder or JC2 archives_32 directory'
+	# Downloading the asset
+	Invoke-WebRequest -Uri $assetUrl -OutFile $assetName
+
+	# Create a directory to extract to
+	$dxvkFolder = $PSScriptRoot + '\' + $assetName
+	# Extracting the archive (tar.gz) using tar
+	tar -xvzf $assetName
+	if (Test-Path -Path $dxvkFolder) {
+		Remove-Item $dxvkFolder\d3d9.dll
+		Copy-Item $dxvkFolder\* $currentInstallPath -Recurse
+		Write-Host 'Copied dxvk  files'
 	}
 }
