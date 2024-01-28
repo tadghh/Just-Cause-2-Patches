@@ -43,11 +43,9 @@ Function Apply-Patches() {
 			if (Test-Path -Path $destinationFile) {
 				$backupFile = $destinationFile + '.bak'
 				Copy-Item -Path $destinationFile -Destination $backupFile -Force
-				Write-Host "Backup created for $($file.Name): $backupFile"
-			}
+   }
 
 			Copy-Item -Path $file.FullName -Destination $destinationFile -Force
-			Write-Host "Copied $($file.Name) to $($currentInstallPath + '\DLC')"
 		}
 
 		Write-Host 'Patch files copied with backups.'
@@ -57,7 +55,20 @@ Function Apply-Patches() {
 	}
 
 }
+function Remove-Filmgrain {
+	# Check for dropzone folder
+	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
+	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
+		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
+		Write-Host 'Created dropzone folder'
+	}
+	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
 
+		Copy-Item $filmgrainPatch\"filmgrain.dds" $currentInstallPath -Force
+
+	}
+
+}
 
 function Revert-Patches() {
 	$filesToRemove = @(
@@ -90,12 +101,14 @@ function Revert-Patches() {
 				Write-Host "Backup restored for $($file.Name)"
 			}
 		}
-		Write-Host 'Patch files copied with backups.'
+		Write-Host 'Reverted Bullseye rifle fix.'
 	}
 	else {
 		Write-Host 'Source directory or destination directory not found.'
 	}
 }
+
+# Delete directx folder
 
 # /FramerateCap=enabled
 # /RefreshRate=N
