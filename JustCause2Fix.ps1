@@ -34,7 +34,7 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-
+# TODO:
 Function Apply-Patches() {
 
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
@@ -68,21 +68,22 @@ Function Apply-Patches() {
 	}
 
 }
-function Remove-Filmgrain {
-	# Check for dropzone folder
-	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
-	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
-		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
-		Write-Host 'Created dropzone folder'
-	}
-	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
+# The launch parameter can be used instead
+# function Remove-Filmgrain {
+# 	# Check for dropzone folder
+# 	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
+# 	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
+# 		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
+# 		Write-Host 'Created dropzone folder'
+# 	}
+# 	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
 
-		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
-		Write-Host 'Applied Filmgrain removal patch'
-	}
+# 		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
+# 		Write-Host 'Applied Filmgrain removal patch'
+# 	}
 
 
-}
+# }
 function Reapply-Filmgrain {
 	# Check for dropzone folder
 	if (Test-Path -Path $currentInstallPath+"\dropzone\filmgrain.dds" ) {
@@ -129,23 +130,6 @@ function Revert-Patches() {
 	}
 }
 
-# Delete directx folder
-#/LODFactor=3 /FramerateCap=enabled /VSync=0 /frameratecap=60 /dxadapter=0 /FilmGrain=0   /fovfactor=1.5
-
-
-
-# Stability changes
-# # Disable dualcore optimiations for async10
-# Download Nvidia Profile Inspector.
-# From the Profiles drop-down menu, select "Just Cause 2" profile.
-# Click on "Show unknown settings from NVIDIA predefined profiles".
-# Find option "ASYNC10_ENABLE" (Under "8 - Extra" section).
-# Set it to "0x53850673 OFF - Disable dual core optimizations".
-# Click on "Apply changes"
-
-# This should allow the "Decals" option to be enabled without crashes.
-# Significantly impacts performance, recommended only on faster machines.
-# Check install locations
 
 # Bokeh filter and GPU water simulation effects will become unavailable.
 # This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
