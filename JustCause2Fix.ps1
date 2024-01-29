@@ -68,31 +68,13 @@ Function Apply-Patches() {
 	}
 
 }
-# The launch parameter can be used instead
-# function Remove-Filmgrain {
-# 	# Check for dropzone folder
-# 	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
-# 	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
-# 		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
-# 		Write-Host 'Created dropzone folder'
-# 	}
-# 	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
 
-# 		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
-# 		Write-Host 'Applied Filmgrain removal patch'
-# 	}
-
-
-# }
-function Reapply-Filmgrain {
-	# Check for dropzone folder
-	if (Test-Path -Path $currentInstallPath+"\dropzone\filmgrain.dds" ) {
-		Remove-Item $currentInstallPath+"\dropzone\filmgrain.dds" -Force
-		Write-Host 'Applied Filmgrain removal patch'
-	}
-}
 
 function Revert-Patches() {
+
+	Revert-Bullseye
+}
+Function Revert-100PFix {
 	$filesToRemove = @(
 		'x_Jusupov_100percent',
 		'x_worldbin'
@@ -113,6 +95,8 @@ function Revert-Patches() {
 	else {
 		Write-Host 'The directory archives_win32 does not exist.'
 	}
+}
+Function Revert-Bullseye {
 	# unfix bullseye rifle
 	if (Test-Path -Path $weaponPatches -and Test-Path -Path $currentInstallPath+"\DLC") {
 		$sourceFiles = Get-ChildItem -Path $weaponPatches -File -Recurse
@@ -129,7 +113,6 @@ function Revert-Patches() {
 		Write-Host 'Source directory or destination directory not found.'
 	}
 }
-
 
 # Bokeh filter and GPU water simulation effects will become unavailable.
 # This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
@@ -161,3 +144,49 @@ function Get-DXVK {
 		Write-Host 'Copied dxvk  files'
 	}
 }
+Function Apply-MouseFix {
+	# Extract to root, force
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aimm Fix Negative Accel'
+	if (Test-Path -Path $mouseAimFixFiles) {
+		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine.dll.bak"
+		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
+		<# Action to perform if the condition is true #>
+	}
+}
+Function Revert-MouseFix {
+	# Extract to root, force
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aimm Fix Negative Accel'
+	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
+		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
+		Remove-Item $currentInstallPath+"PathEngine.dll"
+		Rename-Item -Path $currentInstallPath\"PathEngine.dll.bak" -NewName ($currentInstallPath -replace '\.bak$', '')
+	}
+}
+
+
+
+##### Unused
+
+# The launch parameter can be used instead
+# function Remove-Filmgrain {
+# 	# Check for dropzone folder
+# 	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
+# 	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
+# 		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
+# 		Write-Host 'Created dropzone folder'
+# 	}
+# 	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
+
+# 		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
+# 		Write-Host 'Applied Filmgrain removal patch'
+# 	}
+
+
+# }
+# function Reapply-Filmgrain {
+# 	# Check for dropzone folder
+# 	if (Test-Path -Path $currentInstallPath+"\dropzone\filmgrain.dds" ) {
+# 		Remove-Item $currentInstallPath+"\dropzone\filmgrain.dds" -Force
+# 		Write-Host 'Applied Filmgrain removal patch'
+# 	}
+# }
