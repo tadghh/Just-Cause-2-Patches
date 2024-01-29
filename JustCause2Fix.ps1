@@ -69,11 +69,11 @@ Function Apply-Patches() {
 
 }
 
-
-function Revert-Patches() {
+Function Revert-Patches() {
 
 	Revert-Bullseye
 }
+
 Function Revert-100PFix {
 	$filesToRemove = @(
 		'x_Jusupov_100percent',
@@ -96,6 +96,7 @@ Function Revert-100PFix {
 		Write-Host 'The directory archives_win32 does not exist.'
 	}
 }
+
 Function Revert-Bullseye {
 	# unfix bullseye rifle
 	if (Test-Path -Path $weaponPatches -and Test-Path -Path $currentInstallPath+"\DLC") {
@@ -116,7 +117,7 @@ Function Revert-Bullseye {
 
 # Bokeh filter and GPU water simulation effects will become unavailable.
 # This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
-function Get-DXVK {
+Function Get-DXVK {
 	$latestReleaseApiUrl = 'https://api.github.com/repos/doitsujin/dxvk/releases/latest'
 	$latestRelease = Invoke-RestMethod -Uri $latestReleaseApiUrl
 	$tagName = $latestRelease.tag_name
@@ -144,23 +145,51 @@ function Get-DXVK {
 		Write-Host 'Copied dxvk  files'
 	}
 }
+
 Function Apply-MouseFix {
 	# Extract to root, force
-	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aimm Fix Negative Accel'
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
 	if (Test-Path -Path $mouseAimFixFiles) {
 		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine.dll.bak"
 		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
 		<# Action to perform if the condition is true #>
 	}
 }
+
 Function Revert-MouseFix {
 	# Extract to root, force
-	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aimm Fix Negative Accel'
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
 	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
 		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
 		Remove-Item $currentInstallPath+"PathEngine.dll"
 		Rename-Item -Path $currentInstallPath\"PathEngine.dll.bak" -NewName ($currentInstallPath -replace '\.bak$', '')
 	}
+}
+
+Function Apply-LandscapeTextures {
+
+}
+
+### Mods
+
+Function Apply-RebalancedMod {
+
+}
+
+Function Apply-BetterTraffic {
+
+}
+
+function Apply-Wildlife {
+
+}
+
+function Apply-CutsceneBMSkip {
+ # Disable if Rebalenced mod is active
+}
+
+Function Apply-SkyRetexture {
+
 }
 
 
@@ -180,7 +209,6 @@ Function Revert-MouseFix {
 # 		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
 # 		Write-Host 'Applied Filmgrain removal patch'
 # 	}
-
 
 # }
 # function Reapply-Filmgrain {
