@@ -169,39 +169,86 @@ Function Revert-MouseFix {
 Function Apply-LandscapeTextures {
 	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
 
-	if ( Test-Path -Path $currentInstallPath"\dropzone") {
-		Copy-Item $landscapeTexturePath\* $currentInstallPath"\dropzone" -Recurse
-		Write-Host 'Copied patch files'
+	Install-IntoDropzone $landscapeTexturePath
+}
+
+Function Install-IntoDropzone {
+	param(
+		[string]$modFolderLocation
+	)
+
+	# A very clear statement for handling the recursive tripped variable
+	if (-not (Get-Variable -Name 'tripped' -Scope 1)) {
+		$tripped = $false
+	}
+
+	$dropZonePath = $currentInstallPath + '\dropzone'
+	if ( Test-Path -Path $dropZonePath) {
+		Copy-Item $modFolderLocation\* $dropZonePath -Recurse
+		Write-Host 'Copied files'
 	}
 	else {
-		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
+		New-Item -ItemType 'directory' -Path $dropZonePath
+
+		# Lets not end up in an infinte loop, its not that deep brah
 		if (-not $tripped) {
 			$tripped = true
-			Apply-LandscapeTextures
+			Install-IntoDropzone -modFolderLocation
 		}
 	}
 }
-
 ### Mods
 
 Function Apply-RebalancedMod {
+	$filesToRemove = @(
+		'gen_ext_a.seq',
+		'gen_ext_b.seq',
+		'gen_ext_c.seq',
+		'gen_ext_d.seq',
+		'gen_ext_seq.seq'
+	)
+	Write-Host 'Removing Black market cutscene skip, Rebalanced has its own implementation'
+	$dropZonePath = $currentInstallPath + '\dropzone'
 
+	foreach ($file in $filesToRemove) {
+		$filePath = Join-Path -Path $dropZonePath -ChildPath $file
+		if (Test-Path -Path $filePath) {
+			Remove-Item -Path $filePath -Force
+			Write-Host "Removed file $file from dropzone"
+		}
+	}
+
+	Install-IntoDropzone $PSScriptRoot + '\Mods\Rebalanced'
 }
 
 Function Apply-BetterTraffic {
-
+	Install-IntoDropzone $PSScriptRoot + '\Mods\Better Traffic'
 }
 
 function Apply-Wildlife {
-
+	param(
+		[int]$amount
+	)
+	$response = switch ($amount) {
+		2 { 'medium' }
+		3 { 'high' }
+		4 { 'very high' }
+		default { 'low' }
+	}
+	Install-IntoDropzone "$PSScriptRoot\Mods\More Wildlife\$response"
 }
 
 function Apply-CutsceneBMSkip {
- # Disable if Rebalenced mod is active
+	if (Test-Path -Path $CustomInstallLocation+"\dropzone\serviceMods") {
+		Write-Host 'Rebalanced Black Market skip is still installed. Skipping.'
+	}
+	else {
+		Install-IntoDropzone $PSScriptRoot + '\Mods\No Blackmarket Cutscene'
+	}
 }
 
 Function Apply-SkyRetexture {
-
+	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
 
