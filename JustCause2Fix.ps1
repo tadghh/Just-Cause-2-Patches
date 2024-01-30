@@ -167,7 +167,19 @@ Function Revert-MouseFix {
 }
 
 Function Apply-LandscapeTextures {
+	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
 
+	if ( Test-Path -Path $currentInstallPath"\dropzone") {
+		Copy-Item $landscapeTexturePath\* $currentInstallPath"\dropzone" -Recurse
+		Write-Host 'Copied patch files'
+	}
+	else {
+		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
+		if (-not $tripped) {
+			$tripped = true
+			Apply-LandscapeTextures
+		}
+	}
 }
 
 ### Mods
