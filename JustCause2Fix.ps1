@@ -1,3 +1,4 @@
+
 # Find install path
 param(
 	[String]$CustomInstallLocation
@@ -13,14 +14,47 @@ $exeName = 'JustCause2.exe'
 
 # Default install directory
 $defaultInstallDir = 'C:\Program Files (x86)\Steam\steamapps\common\Just Cause 2\'
-if (Test-Path -Path ($defaultInstallDir + $exeName) -or Test-Path -Path ($CustomInstallLocation + $exeName) ) {
+if ((Test-Path -Path ($defaultInstallDir + $exeName)) -or (Test-Path -Path ($CustomInstallLocation + $exeName)) ) {
 	$validInstallPath = $true
 
-	$currentInstallPath = Test-Path -Path $defaultInstallDir ? $defaultInstallDir : $CustomInstallLocation
+	$currentInstallPath = (Test-Path -Path $defaultInstallDir )? $defaultInstallDir : $CustomInstallLocation
 }
 else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
+
+
+
+
+function Show-Menu {
+	param (
+		[string]$Title = 'My Menu'
+	)
+	Clear-Host
+	Write-Host "================ $Title ================"
+
+	Write-Host '1: View patches.'
+	Write-Host '2: View mods.'
+	Write-Host "Q: Press 'Q' to quit."
+}
+
+do {
+	Show-Menu
+	$selection = Read-Host 'Please make a selection'
+	switch ($selection) {
+		'1' {
+			'You chose option #1'
+		} '2' {
+			'You chose option #2'
+		} '3' {
+			'You chose option #3'
+		}
+	}
+
+}
+until ($selection -eq 'q')
+
+
 
 # only enable decals when dxck
 # User needs to add these to steam or launch with a a shortcut/ Justcause.exe /commands here
