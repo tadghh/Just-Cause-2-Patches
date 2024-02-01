@@ -14,12 +14,18 @@ $exeName = 'JustCause2.exe'
 $defaultInstallDir = 'C:\Program Files (x86)\Steam\steamapps\common\Just Cause 2\'
 if ((Test-Path -Path ($defaultInstallDir + $exeName)) -or (Test-Path -Path ($CustomInstallLocation + $exeName)) ) {
 	$validInstallPath = $true
-
 	$currentInstallPath = (Test-Path -Path $defaultInstallDir )? $defaultInstallDir : $CustomInstallLocation
 }
 else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
+
+function Test-InstallDir {
+ Write-Host 'Current game install status:'($validInstallPath ? ("found at $currentInstallPath") : 'not found :(')
+}
+
+
+
 
 function Show-MainMenu {
 	param (
@@ -30,6 +36,7 @@ function Show-MainMenu {
 
 	Write-Host '1: View patches.'
 	Write-Host '2: View mods.'
+	Write-Host '3: Check install status.'
 	Write-Host "Press 'Q' to quit."
 }
 
@@ -42,11 +49,17 @@ function Open-MainMenu {
 				Patch-Menu
 			} '2' {
 				'You chose option #2'
+			} '3' {
+				Test-InstallDir
+				Pause
 			}
 		}
 	}
 	until ($selection -eq 'q')
 }
+
+# Script 'entry point'
+Open-MainMenu
 
 # only enable decals when dxck
 # User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
