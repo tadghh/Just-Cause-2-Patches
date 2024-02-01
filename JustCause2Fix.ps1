@@ -35,18 +35,15 @@ function Show-MainMenu {
 
 function Main-Menu {
 	do {
-		Show-Menu
+		Show-MainMenu
 		$selection = Read-Host 'Please make a selection'
 		switch ($selection) {
 			'1' {
-				Show-MainMenu
+				Patch-Menu
 			} '2' {
 				'You chose option #2'
-			} '3' {
-				'You chose option #3'
 			}
 		}
-
 	}
 	until ($selection -eq 'q')
 }
@@ -64,9 +61,14 @@ $userLaunchParameters = @{
 }
 
 Function Apply-Patches {
+	Apply-BullseyeRiflePatch
+	Apply-GameCompletionPatch
+	Apply-LandscapeTextures
+	Apply-MouseFix
+}
 
+function Apply-GameCompletionPatch {
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
-	$weaponPatches = $PSScriptRoot + '\Patches\Bullseye Rifle Fix'
 	if (Test-Path -Path $gameCompletionPatches -and Test-Path -Path $currentInstallPath+"\archives_win32") {
 		Copy-Item $gameCompletionPatches\* $currentInstallPath"\archives_32" -Recurse
 		Write-Host 'Copied patch files'
@@ -74,6 +76,11 @@ Function Apply-Patches {
 	else {
 		Write-Host 'Could not find local patches folder or JC2 archives_32 directory'
 	}
+}
+
+function Apply-BullseyeRiflePatch {
+	$weaponPatches = $PSScriptRoot + '\Patches\Bullseye Rifle Fix'
+
 	# Bullseye Rifle
 	if (Test-Path -Path $weaponPatches -and Test-Path -Path $currentInstallPath+"\DLC") {
 		$sourceFiles = Get-ChildItem -Path $weaponPatches -File -Recurse
@@ -96,10 +103,68 @@ Function Apply-Patches {
 	}
 }
 
-Function Revert-Patches {
+# Bokeh filter and GPU water simulation effects will become unavailable.
+# This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
+Function Get-DXVK {
+	$latestReleaseApiUrl = 'https://api.github.com/repos/doitsujin/dxvk/releases/latest'
+	$latestRelease = Invoke-RestMethod -Uri $latestReleaseApiUrl
+	$tagName = $latestRelease.tag_name
 
-	Revert-Bullseye
+	# Releases have other similar filtypes so we need to filter those out
+	# Regex is slow so we look for filenames that dont include the word "native" aka nat.
+	$asset = $latestRelease.assets | Where-Object { $_.name -like '*.tar.gz' -and $_.name -notlike '*-nat*' }
+
+	# Constructing the URL of the asset
+	$assetUrl = $asset.browser_download_url
+
+	# Extracting the asset name from the URL
+	$assetName = $assetUrl -split '/' | Select-Object -Last 1
+
+	# Downloading the asset
+	Invoke-WebRequest -Uri $assetUrl -OutFile $assetName
+
+	# Create a directory to extract to
+	$dxvkFolder = $PSScriptRoot + '\' + $assetName
+	# Extracting the archive (tar.gz) using tar
+	tar -xvzf $assetName
+	if (Test-Path -Path $dxvkFolder) {
+		Remove-Item $dxvkFolder\d3d9.dll
+		Copy-Item $dxvkFolder\* $currentInstallPath -Recurse
+		Write-Host 'Copied dxvk  files'
+	}
 }
+Function Apply-LandscapeTextures {
+	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
+
+	Install-IntoDropzone $landscapeTexturePath
+}
+
+Function Apply-MouseFix {
+	# Extract to root, force
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
+	if (Test-Path -Path $mouseAimFixFiles) {
+		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine.dll.bak"
+		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
+		<# Action to perform if the condition is true #>
+	}
+}
+
+Function Revert-Patches {
+	Revert-MouseFix
+	Revert-Bullseye
+
+}
+
+Function Revert-MouseFix {
+	# Extract to root, force
+	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
+	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
+		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
+		Remove-Item $currentInstallPath+"PathEngine.dll"
+		Rename-Item -Path $currentInstallPath\"PathEngine.dll.bak" -NewName ($currentInstallPath -replace '\.bak$', '')
+	}
+}
+
 
 Function Revert-100PFix {
 	$filesToRemove = @(
@@ -142,72 +207,21 @@ Function Revert-Bullseye {
 	}
 }
 
-# Bokeh filter and GPU water simulation effects will become unavailable.
-# This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
-Function Get-DXVK {
-	$latestReleaseApiUrl = 'https://api.github.com/repos/doitsujin/dxvk/releases/latest'
-	$latestRelease = Invoke-RestMethod -Uri $latestReleaseApiUrl
-	$tagName = $latestRelease.tag_name
-
-	# Releases have other similar filtypes so we need to filter those out
-	# Regex is slow so we look for filenames that dont include the word "native" aka nat.
-	$asset = $latestRelease.assets | Where-Object { $_.name -like '*.tar.gz' -and $_.name -notlike '*-nat*' }
-
-	# Constructing the URL of the asset
-	$assetUrl = $asset.browser_download_url
-
-	# Extracting the asset name from the URL
-	$assetName = $assetUrl -split '/' | Select-Object -Last 1
-
-	# Downloading the asset
-	Invoke-WebRequest -Uri $assetUrl -OutFile $assetName
-
-	# Create a directory to extract to
-	$dxvkFolder = $PSScriptRoot + '\' + $assetName
-	# Extracting the archive (tar.gz) using tar
-	tar -xvzf $assetName
-	if (Test-Path -Path $dxvkFolder) {
-		Remove-Item $dxvkFolder\d3d9.dll
-		Copy-Item $dxvkFolder\* $currentInstallPath -Recurse
-		Write-Host 'Copied dxvk  files'
-	}
-}
-
-Function Apply-MouseFix {
-	# Extract to root, force
-	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
-	if (Test-Path -Path $mouseAimFixFiles) {
-		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine.dll.bak"
-		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
-		<# Action to perform if the condition is true #>
-	}
-}
-
-Function Revert-MouseFix {
-	# Extract to root, force
-	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
-	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
-		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
-		Remove-Item $currentInstallPath+"PathEngine.dll"
-		Rename-Item -Path $currentInstallPath\"PathEngine.dll.bak" -NewName ($currentInstallPath -replace '\.bak$', '')
-	}
-}
-
-Function Apply-LandscapeTextures {
-	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
-
-	Install-IntoDropzone $landscapeTexturePath
-}
-
 
 function Show-PatchMenu {
 	Clear-Host
 	Write-Host '================ Patches ================'
 
 	Write-Host '1: Apply all.'
-	Write-Host '2: Revert 100 percent compilation.'
-	Write-Host '3: Revert Bullseye Rifle fix.'
-	Write-Host '4: Main menu.'
+	Write-Host '2: Apply Stability fixes (DXVK).'
+	Write-Host '3: Apply Mouse Fix.'
+	Write-Host '4: Apply 100% Completion Patch.'
+	Write-Host '5: Apply Bullseye Rifle Patch.'
+	Write-Host '6: Revert Bullseye Rifle fix.'
+	Write-Host '7: Revert Stability fixes (DXVK).'
+	Write-Host '8: Revert Mouse Fix.'
+	Write-Host '9: Revert 100% Completion Patch.'
+	Write-Host '0: Main menu.'
 	Write-Host "Press 'Q' to quit."
 }
 
@@ -219,9 +233,23 @@ function Patch-Menu {
 			'1' {
 				Apply-Patches
 			} '2' {
-				'You chose option #2'
+				Get-DXVK
+			} '3' {
+				Apply-MouseFix
 			} '4' {
-				Show-Menu
+				Apply-GameCompletionPatch
+			} '5' {
+				Apply-BullseyeRiflePatch
+			} '6' {
+				Revert-Bullseye
+			} '7' {
+				# TODO: Add revert dxvk
+			} '8' {
+				Revert-MouseFix
+			} '9' {
+				Revert-100PFix
+			} default {
+				Main-Menu
 			}
 		}
 
