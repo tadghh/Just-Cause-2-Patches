@@ -152,7 +152,7 @@ Function Apply-MouseFix {
 Function Uninstall-Patches {
 	Uninstall-MouseFix
 	Uninstall-Bullseye
-
+	Uninstall-100PFix
 }
 
 Function Uninstall-MouseFix {
@@ -331,7 +331,6 @@ function Install-CutsceneBMSkip {
 		Install-IntoDropzone $PSScriptRoot + '\Mods\No Blackmarket Cutscene'
 	}
 }
-
 Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
