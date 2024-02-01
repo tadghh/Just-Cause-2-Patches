@@ -103,12 +103,15 @@ Function Get-DXVK {
 	$dxvkFolder = $PSScriptRoot + '\' + $assetName
 	# Extracting the archive (tar.gz) using tar
 	tar -xvzf $assetName
-	if (Test-Path -Path $dxvkFolder) {
-		Remove-Item $dxvkFolder\d3d9.dll
-		Copy-Item $dxvkFolder\* $currentInstallPath -Recurse
-		Write-Host 'Copied dxvk  files'
+	$assetName = $assetName.substring(0, $assetName.IndexOf('tar') - 1)
+	if (Test-Path -Path $assetName) {
+		Write-Host $assetName
+		Remove-Item -Recurse $assetName\"x64"
+		Remove-Item $assetName\"x32"\d3d9.dll
+		Copy-Item $assetName\"x32"\* $currentInstallPath -Recurse
 	}
 }
+
 Function Install-LandscapeTextures {
 	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
 
