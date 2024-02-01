@@ -149,13 +149,13 @@ Function Apply-MouseFix {
 	}
 }
 
-Function Revert-Patches {
-	Revert-MouseFix
-	Revert-Bullseye
+Function Uninstall-Patches {
+	Uninstall-MouseFix
+	Uninstall-Bullseye
 
 }
 
-Function Revert-MouseFix {
+Function Uninstall-MouseFix {
 	# Extract to root, force
 	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
 	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
@@ -166,7 +166,7 @@ Function Revert-MouseFix {
 }
 
 
-Function Revert-100PFix {
+Function Uninstall-100PFix {
 	$filesToRemove = @(
 		'x_Jusupov_100percent',
 		'x_worldbin'
@@ -189,7 +189,7 @@ Function Revert-100PFix {
 	}
 }
 
-Function Revert-Bullseye {
+Function Uninstall-Bullseye {
 	# unfix bullseye rifle
 	if (Test-Path -Path $weaponPatches -and Test-Path -Path $currentInstallPath+"\DLC") {
 		$sourceFiles = Get-ChildItem -Path $weaponPatches -File -Recurse
@@ -200,7 +200,7 @@ Function Revert-Bullseye {
 				Write-Host "Backup restored for $($file.Name)"
 			}
 		}
-		Write-Host 'Reverted Bullseye rifle fix.'
+		Write-Host 'Uninstalled Bullseye rifle fix.'
 	}
 	else {
 		Write-Host 'Source directory or destination directory not found.'
@@ -217,10 +217,10 @@ function Show-PatchMenu {
 	Write-Host '3: Apply Mouse Fix.'
 	Write-Host '4: Apply 100% Completion Patch.'
 	Write-Host '5: Apply Bullseye Rifle Patch.'
-	Write-Host '6: Revert Bullseye Rifle fix.'
-	Write-Host '7: Revert Stability fixes (DXVK).'
-	Write-Host '8: Revert Mouse Fix.'
-	Write-Host '9: Revert 100% Completion Patch.'
+	Write-Host '6: Uninstall Bullseye Rifle fix.'
+	Write-Host '7: Uninstall Stability fixes (DXVK).'
+	Write-Host '8: Uninstall Mouse Fix.'
+	Write-Host '9: Uninstall 100% Completion Patch.'
 	Write-Host '0: Main menu.'
 	Write-Host "Press 'Q' to quit."
 }
@@ -231,23 +231,23 @@ function Patch-Menu {
 		$selection = Read-Host 'Please make a selection'
 		switch ($selection) {
 			'1' {
-				Apply-Patches
+				Install-Patches
 			} '2' {
 				Get-DXVK
 			} '3' {
-				Apply-MouseFix
+				Install-MouseFix
 			} '4' {
-				Apply-GameCompletionPatch
+				Install-GameCompletionPatch
 			} '5' {
-				Apply-BullseyeRiflePatch
+				Install-BullseyeRiflePatch
 			} '6' {
-				Revert-Bullseye
+				Uninstall-Bullseye
 			} '7' {
-				# TODO: Add revert dxvk
+				# TODO: Add Uninstall dxvk
 			} '8' {
-				Revert-MouseFix
+				Uninstall-MouseFix
 			} '9' {
-				Revert-100PFix
+				Uninstall-100PFix
 			} default {
 				Main-Menu
 			}
@@ -284,7 +284,7 @@ Function Install-IntoDropzone {
 }
 ### Mods
 
-Function Apply-RebalancedMod {
+Function Install-RebalancedMod {
 	$filesToRemove = @(
 		'gen_ext_a.seq',
 		'gen_ext_b.seq',
@@ -306,11 +306,11 @@ Function Apply-RebalancedMod {
 	Install-IntoDropzone $PSScriptRoot + '\Mods\Rebalanced'
 }
 
-Function Apply-BetterTraffic {
+Function Install-BetterTraffic {
 	Install-IntoDropzone $PSScriptRoot + '\Mods\Better Traffic'
 }
 
-function Apply-Wildlife {
+function Install-Wildlife {
 	param(
 		[int]$amount
 	)
@@ -323,7 +323,7 @@ function Apply-Wildlife {
 	Install-IntoDropzone "$PSScriptRoot\Mods\More Wildlife\$response"
 }
 
-function Apply-CutsceneBMSkip {
+function Install-CutsceneBMSkip {
 	if (Test-Path -Path $CustomInstallLocation+"\dropzone\serviceMods") {
 		Write-Host 'Rebalanced Black Market skip is still installed. Skipping.'
 	}
@@ -332,7 +332,7 @@ function Apply-CutsceneBMSkip {
 	}
 }
 
-Function Apply-SkyRetexture {
+Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
