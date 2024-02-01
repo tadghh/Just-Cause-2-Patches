@@ -119,7 +119,7 @@ Function Install-MouseFix {
 	# Extract to root, force
 	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
 	if (Test-Path -Path $mouseAimFixFiles) {
-		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine.dll.bak"
+		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine_orig.dll"
 		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
 		<# Action to perform if the condition is true #>
 	}
@@ -138,7 +138,7 @@ Function Uninstall-MouseFix {
 	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
 		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
 		Remove-Item $currentInstallPath+"PathEngine.dll"
-		Rename-Item -Path $currentInstallPath\"PathEngine.dll.bak" -NewName ($currentInstallPath -replace '\.bak$', '')
+		Rename-Item -Path $currentInstallPath\"PathEngine_orig.dll" -NewName ($currentInstallPath -replace '\.bak$', '')
 	}
 }
 
