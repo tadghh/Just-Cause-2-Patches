@@ -1,5 +1,3 @@
-
-# Find install path
 param(
 	[String]$CustomInstallLocation
 )
@@ -23,41 +21,38 @@ else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
 
-
-
-
-function Show-Menu {
+function Show-MainMenu {
 	param (
-		[string]$Title = 'My Menu'
+		[string]$Title = 'Main'
 	)
 	Clear-Host
 	Write-Host "================ $Title ================"
 
 	Write-Host '1: View patches.'
 	Write-Host '2: View mods.'
-	Write-Host "Q: Press 'Q' to quit."
+	Write-Host "Press 'Q' to quit."
 }
 
-do {
-	Show-Menu
-	$selection = Read-Host 'Please make a selection'
-	switch ($selection) {
-		'1' {
-			'You chose option #1'
-		} '2' {
-			'You chose option #2'
-		} '3' {
-			'You chose option #3'
+function Main-Menu {
+	do {
+		Show-Menu
+		$selection = Read-Host 'Please make a selection'
+		switch ($selection) {
+			'1' {
+				Show-MainMenu
+			} '2' {
+				'You chose option #2'
+			} '3' {
+				'You chose option #3'
+			}
 		}
+
 	}
-
+	until ($selection -eq 'q')
 }
-until ($selection -eq 'q')
-
-
 
 # only enable decals when dxck
-# User needs to add these to steam or launch with a a shortcut/ Justcause.exe /commands here
+# User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
 $userLaunchParameters = @{
 	LODFactor    = 1
 	VSync        = 0
@@ -68,8 +63,7 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-# TODO:
-Function Apply-Patches() {
+Function Apply-Patches {
 
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
 	$weaponPatches = $PSScriptRoot + '\Patches\Bullseye Rifle Fix'
@@ -100,10 +94,9 @@ Function Apply-Patches() {
 	else {
 		Write-Host 'Source directory or destination directory not found.'
 	}
-
 }
 
-Function Revert-Patches() {
+Function Revert-Patches {
 
 	Revert-Bullseye
 }
@@ -204,6 +197,36 @@ Function Apply-LandscapeTextures {
 	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
 
 	Install-IntoDropzone $landscapeTexturePath
+}
+
+
+function Show-PatchMenu {
+	Clear-Host
+	Write-Host '================ Patches ================'
+
+	Write-Host '1: Apply all.'
+	Write-Host '2: Revert 100 percent compilation.'
+	Write-Host '3: Revert Bullseye Rifle fix.'
+	Write-Host '4: Main menu.'
+	Write-Host "Press 'Q' to quit."
+}
+
+function Patch-Menu {
+	do {
+		Show-PatchMenu
+		$selection = Read-Host 'Please make a selection'
+		switch ($selection) {
+			'1' {
+				Apply-Patches
+			} '2' {
+				'You chose option #2'
+			} '4' {
+				Show-Menu
+			}
+		}
+
+	}
+	until ($selection -eq 'q')
 }
 
 Function Install-IntoDropzone {
