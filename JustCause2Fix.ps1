@@ -153,6 +153,7 @@ Function Uninstall-Patches {
 	Uninstall-MouseFix
 	Uninstall-Bullseye
 	Uninstall-100PFix
+	Uninstall-DVXK
 }
 
 Function Uninstall-MouseFix {
@@ -260,7 +261,7 @@ function Patch-Menu {
 			} '6' {
 				Uninstall-Bullseye
 			} '7' {
-				# TODO: Add Uninstall dxvk
+				Uninstall-DVXK
 			} '8' {
 				Uninstall-MouseFix
 			} '9' {
