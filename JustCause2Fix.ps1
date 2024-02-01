@@ -33,7 +33,7 @@ function Show-MainMenu {
 	Write-Host "Press 'Q' to quit."
 }
 
-function Main-Menu {
+function Open-MainMenu {
 	do {
 		Show-MainMenu
 		$selection = Read-Host 'Please make a selection'
@@ -267,7 +267,7 @@ function Patch-Menu {
 			} '9' {
 				Uninstall-100PFix
 			} default {
-				Main-Menu
+				Open-MainMenu
 			}
 		}
 
