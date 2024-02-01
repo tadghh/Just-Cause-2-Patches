@@ -141,7 +141,7 @@ Function Uninstall-MouseFix {
 	if (Test-Path -Path $currentInstallPath+"JC2MouseFix.dll") {
 		Remove-Item $currentInstallPath+"JC2MouseFix.dll"
 		Remove-Item $currentInstallPath+"PathEngine.dll"
-		Rename-Item -Path $currentInstallPath\"PathEngine_orig.dll" -NewName ($currentInstallPath -replace '\.bak$', '')
+		Rename-Item -Path $currentInstallPath\"PathEngine_orig.dll" -NewName ($currentInstallPath -replace '_orig', '') -Force
 	}
 }
 
