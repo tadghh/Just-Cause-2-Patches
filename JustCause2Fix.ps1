@@ -24,43 +24,6 @@ function Test-InstallDir {
  Write-Host 'Current game install status:'($validInstallPath ? ("found at $currentInstallPath") : 'not found :(')
 }
 
-
-
-
-function Show-MainMenu {
-	param (
-		[string]$Title = 'Main'
-	)
-	Clear-Host
-	Write-Host "================ $Title ================"
-
-	Write-Host '1: View patches.'
-	Write-Host '2: View mods.'
-	Write-Host '3: Check install status.'
-	Write-Host "Press 'Q' to quit."
-}
-
-function Open-MainMenu {
-	do {
-		Show-MainMenu
-		$selection = Read-Host 'Please make a selection'
-		switch ($selection) {
-			'1' {
-				Patch-Menu
-			} '2' {
-				'You chose option #2'
-			} '3' {
-				Test-InstallDir
-				Pause
-			}
-		}
-	}
-	until ($selection -eq 'q')
-}
-
-# Script 'entry point'
-Open-MainMenu
-
 # only enable decals when dxck
 # User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
 $userLaunchParameters = @{
@@ -73,14 +36,14 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-Function Apply-Patches {
+Function Install-Patches {
 	Apply-BullseyeRiflePatch
 	Apply-GameCompletionPatch
 	Apply-LandscapeTextures
 	Apply-MouseFix
 }
 
-function Apply-GameCompletionPatch {
+function Install-GameCompletionPatch {
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
 	if (Test-Path -Path $gameCompletionPatches -and Test-Path -Path $currentInstallPath+"\archives_win32") {
 		Copy-Item $gameCompletionPatches\* $currentInstallPath"\archives_32" -Recurse
@@ -91,7 +54,7 @@ function Apply-GameCompletionPatch {
 	}
 }
 
-function Apply-BullseyeRiflePatch {
+function Install-BullseyeRiflePatch {
 	$weaponPatches = $PSScriptRoot + '\Patches\Bullseye Rifle Fix'
 
 	# Bullseye Rifle
@@ -146,13 +109,13 @@ Function Get-DXVK {
 		Write-Host 'Copied dxvk  files'
 	}
 }
-Function Apply-LandscapeTextures {
+Function Install-LandscapeTextures {
 	$landscapeTexturePath = $PSScriptRoot + '\Patches\Landscape Textures'
 
 	Install-IntoDropzone $landscapeTexturePath
 }
 
-Function Apply-MouseFix {
+Function Install-MouseFix {
 	# Extract to root, force
 	$mouseAimFixFiles = $PSScriptRoot + '\Patches\Mouse Aim Fix Negative Accel'
 	if (Test-Path -Path $mouseAimFixFiles) {
@@ -392,3 +355,37 @@ Function Install-SkyRetexture {
 # 		Write-Host 'Applied Filmgrain removal patch'
 # 	}
 # }
+
+function Show-MainMenu {
+	param (
+		[string]$Title = 'Main'
+	)
+	Clear-Host
+	Write-Host "================ $Title ================"
+
+	Write-Host '1: View patches.'
+	Write-Host '2: View mods.'
+	Write-Host '3: Check install status.'
+	Write-Host "Press 'Q' to quit."
+}
+
+function Open-MainMenu {
+	do {
+		Show-MainMenu
+		$selection = Read-Host 'Please make a selection'
+		switch ($selection) {
+			'1' {
+				Patch-Menu
+			} '2' {
+				'You chose option #2'
+			} '3' {
+				Test-InstallDir
+				Pause
+			}
+		}
+	}
+	until ($selection -eq 'q')
+}
+
+# Script 'entry point'
+Open-MainMenu
