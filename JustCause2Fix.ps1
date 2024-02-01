@@ -165,7 +165,6 @@ Function Uninstall-MouseFix {
 	}
 }
 
-
 Function Uninstall-100PFix {
 	$filesToRemove = @(
 		'x_Jusupov_100percent',
@@ -207,6 +206,24 @@ Function Uninstall-Bullseye {
 	}
 }
 
+function Uninstall-DVXK {
+	$filesToRemove = @(
+		'dxgi.dll',
+		'd3d11.dll',
+		'd3d10core.dll'
+	)
+
+	foreach ($file in $filesToRemove) {
+		$fileToRemovePath = Join-Path -Path $currentInstallPath -ChildPath $file
+		if (Test-Path -Path $fileToRemovePath) {
+			Remove-Item -Path $fileToRemovePath -Force
+			Write-Host "Removed file: $fileToRemovePath"
+		}
+		else {
+			Write-Host "File not found: $fileToRemovePath"
+		}
+	}
+}
 
 function Show-PatchMenu {
 	Clear-Host
