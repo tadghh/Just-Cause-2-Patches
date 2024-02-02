@@ -28,6 +28,55 @@ function Test-InstallDir {
  Write-Host 'Current game install status:'($validInstallPath ? ("found at $currentInstallPath") : 'not found :(')
 }
 
+<#
+.SYNOPSIS
+Uninstalls a mod/patch based on its install files.
+
+.DESCRIPTION
+Will gather similar folders and files found inside the passed in parameter. The files and folders will be removed
+Folders wont be removed if non matching files are leftover inside, providing comptability across intersecting mods.
+
+.PARAMETER modFolderLocation
+The install directory (downloaded zip file) of the mod/patch
+
+.EXAMPLE
+Uninstall-FromDropzone ".\Mods\Better Blood"
+
+#>
+Function Uninstall-FromDropzone {
+	param(
+		[string]$modFolderLocation
+	)
+
+	$dropZonePath = $currentInstallPath + '\dropzone'
+	if (Test-Path -Path $dropZonePath) {
+		$filesToRemove = Get-ChildItem -Path $modFolderLocation -Recurse
+		$dropzoneFiles = Get-ChildItem -Path $dropZonePath -Recurse
+
+		$matchingDropzoneFiles = $dropzoneFiles | Where-Object { $_.Name -in $filesToRemove.Name -and $_.LastWriteTime -in $filesToRemove.LastWriteTime }
+
+		foreach ($matchingFile in $matchingDropzoneFiles) {
+			if ($matchingFile.PSIsContainer) {
+				$childItems = Get-ChildItem -Path $matchingFile.FullName -Recurse
+				if ($childItems.Count -eq 0) {
+					Remove-Item $matchingFile.FullName -Force
+					Write-Host "Removed folder $($matchingFile.FullName)"
+				}
+				else {
+					Write-Host "Skipped removing non-empty folder $($matchingFile.FullName) (Might be in use from other mods/patches)"
+				}
+			}
+			else {
+				Remove-Item $matchingFile.FullName -Force
+				Write-Host "Removed file $($matchingFile.FullName)"
+			}
+		}
+	}
+	else {
+		Write-Host 'Dropzone folder not found in JC2 Root directory.'
+	}
+}
+
 Function Install-IntoDropzone {
 	param(
 		[string]$modFolderLocation
