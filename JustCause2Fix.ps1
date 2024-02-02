@@ -135,7 +135,7 @@ Function Install-MouseFix {
 Function Uninstall-Patches {
 	Uninstall-MouseFix
 	Uninstall-Bullseye
-	Uninstall-100PFix
+	Uninstall-GameCompletionPatch
 	Uninstall-DVXK
 }
 
@@ -149,7 +149,7 @@ Function Uninstall-MouseFix {
 	}
 }
 
-Function Uninstall-100PFix {
+Function Uninstall-GameCompletionPatch {
 	$filesToRemove = @(
 		'x_Jusupov_100percent',
 		'x_worldbin'
@@ -382,7 +382,10 @@ function Select-MenuOption {
 	} until (!$isFocused)
 
 	# fallout of loop for menus, still gotta call the action. Akin to a "trust fall"
-	$MenuItems[$index].Action
+	if (!$isFocused) {
+		$MenuItems[$index].Action
+	}
+
 }
 
 #
@@ -395,7 +398,7 @@ $patchMenuItems = @(
 	@{ Title = 'Uninstall Bullseye Rifle fix.'; Action = { Uninstall-Bullseye } },
 	@{ Title = 'Uninstall Stability fixes (DXVK).'; Action = { Uninstall-DVXK } },
 	@{ Title = 'Uninstall Mouse Fix.'; Action = { Uninstall-MouseFix } },
-	@{ Title = 'Uninstall 100% Completion Patch.'; Action = { Uninstall-100PFix } },
+	@{ Title = 'Uninstall 100% Completion Patch.'; Action = { Uninstall-GameCompletionPatch } },
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
 )
 #
