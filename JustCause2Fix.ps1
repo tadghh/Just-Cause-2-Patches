@@ -336,41 +336,6 @@ Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
-
-function Show-MainMenu {
-	param (
-		[string]$Title = 'Main'
-	)
-	Clear-Host
-	Write-Host "================ $Title ================"
-
-	Write-Host '1: View patches.'
-	Write-Host '2: View mods.'
-	Write-Host '3: Check install status.'
-	Write-Host "Press 'Q' to quit."
-}
-
-function Open-MainMenu {
-	do {
-		Show-MainMenu
-		$selection = Read-Host 'Please make a selection'
-		switch ($selection) {
-			'1' {
-				Patch-Menu
-			} '2' {
-				'You chose option #2'
-			} '3' {
-				Test-InstallDir
-				Pause
-			}
-		}
-	}
-	until ($selection -eq 'q')
-}
-
-# Script 'entry point'
-#Open-MainMenu
-
 function Show-Menu {
 	param (
 		[array]$MenuItems
