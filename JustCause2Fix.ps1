@@ -351,6 +351,7 @@ $patchMenuItems = @(
 	@{ Title = 'Apply Mouse Fix.'; Action = { Install-MouseFix } },
 	@{ Title = 'Apply 100% Completion Patch.'; Action = { Install-GameCompletionPatch } },
 	@{ Title = 'Apply Bullseye Rifle Patch.'; Action = { Install-BullseyeRiflePatch } },
+	@{ Title = 'Apply Landscape Texture Patch.'; Action = { Install-LandscapeTextures } },
 	@{ Title = 'Uninstall Bullseye Rifle fix.'; Action = { Uninstall-Bullseye } },
 	@{ Title = 'Uninstall Stability fixes (DXVK).'; Action = { Uninstall-DVXK } },
 	@{ Title = 'Uninstall Mouse Fix.'; Action = { Uninstall-MouseFix } },
