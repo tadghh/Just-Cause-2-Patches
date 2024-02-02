@@ -101,8 +101,11 @@ Function Get-DXVK {
 
 	# Create a directory to extract to
 	$dxvkFolder = $PSScriptRoot + '\' + $assetName
+
 	# Extracting the archive (tar.gz) using tar
 	tar -xvzf $assetName
+
+	# Get the folder name created from extracting tar
 	$assetName = $assetName.substring(0, $assetName.IndexOf('tar') - 1)
 	if (Test-Path -Path $assetName) {
 		Write-Host $assetName
