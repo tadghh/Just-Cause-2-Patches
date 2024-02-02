@@ -77,6 +77,21 @@ Function Uninstall-FromDropzone {
 	}
 }
 
+<#
+.SYNOPSIS
+Files and folders in contained in $modFolderLocation are copied into the dropzone folder
+
+.DESCRIPTION
+Files and folders in contained in $modFolderLocation are copied into the dropzone folder.
+If the dropzone folder doesnt exist it will be created and the function will recall itself.
+
+.PARAMETER modFolderLocation
+The mods folder
+
+.EXAMPLE
+An exampleUninstall-FromDropzone ".\Mods\Better Blood"
+
+#>
 Function Install-IntoDropzone {
 	param(
 		[string]$modFolderLocation
