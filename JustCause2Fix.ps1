@@ -89,7 +89,7 @@ If the dropzone folder doesnt exist it will be created and the function will rec
 The mods folder
 
 .EXAMPLE
-An exampleUninstall-FromDropzone ".\Mods\Better Blood"
+An example Install-IntoDropzone ".\Mods\Better Blood"
 
 #>
 Function Install-IntoDropzone {
