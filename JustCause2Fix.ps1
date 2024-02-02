@@ -30,6 +30,49 @@ function Test-InstallDir {
 
 <#
 .SYNOPSIS
+Gets information used to verify mods, in the case there are issues.
+
+.DESCRIPTION
+Gets the structure of the folders in the github resposity, along with file names and sizes to verify agaisnt.
+
+.NOTES
+If I change my github username or the repository name this will break
+#>
+Function Verify-ModIntegrity {
+
+	$baseUri = 'https://api.github.com/repos/tadghh/Just-Cause-2-Patches/contents'
+	$uri = "$baseUri?ref=main"
+
+	$response = Invoke-RestMethod -Uri $uri -Method Get
+
+	$folderStructure = New-Object System.Collections.ArrayList
+
+	foreach ($folder in $response | Where-Object { $_.type -eq 'dir' }) {
+		$folderName = $folder.name
+		$folderUri = $folder.url
+
+		$files = Invoke-RestMethod -Uri $folderUri -Method Get
+
+		$folderFiles = foreach ($file in $files) {
+			[PSCustomObject]@{
+				FileName = $file.name
+				Size     = $file.size
+			}
+		}
+
+		$folderObject = [PSCustomObject]@{
+			FolderName = $folderName
+			Files      = $folderFiles
+		}
+
+		[void]$folderStructure.Add($folderObject)
+	}
+
+	return $folderStructure
+}
+
+<#
+.SYNOPSIS
 Uninstalls a mod/patch based on its install files.
 
 .DESCRIPTION
@@ -345,12 +388,13 @@ function Install-Wildlife {
 
 function Install-CutsceneBMSkip {
 	if (Test-Path -Path $CustomInstallLocation+"\dropzone\serviceMods") {
-		Write-Host 'Rebalanced Black Market skip is still installed. Skipping.'
+		Write-Host 'Rebalanced Black Market skip is installed. Skipping.'
 	}
 	else {
 		Install-IntoDropzone $PSScriptRoot + '\Mods\No Blackmarket Cutscene'
 	}
 }
+
 Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
