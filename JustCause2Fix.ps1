@@ -22,10 +22,37 @@ else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
 }
 
+## Utility
+
 function Test-InstallDir {
  Write-Host 'Current game install status:'($validInstallPath ? ("found at $currentInstallPath") : 'not found :(')
 }
 
+Function Install-IntoDropzone {
+	param(
+		[string]$modFolderLocation
+	)
+
+	# A very clear statement for handling the recursive tripped variable
+	if (-not (Get-Variable -Name 'tripped' -Scope 1)) {
+		$tripped = $false
+	}
+
+	$dropZonePath = $currentInstallPath + '\dropzone'
+	if ( Test-Path -Path $dropZonePath) {
+		Copy-Item $modFolderLocation\* $dropZonePath -Recurse
+		Write-Host 'Copied files'
+	}
+	else {
+		New-Item -ItemType 'directory' -Path $dropZonePath
+
+		# Lets not end up in an infinte loop, its not that deep brah
+		if (-not $tripped) {
+			$tripped = true
+			Install-IntoDropzone -modFolderLocation
+		}
+	}
+}
 # only enable decals when dxck
 # User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
 $userLaunchParameters = @{
@@ -38,12 +65,6 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-Function Install-Patches {
-	Apply-BullseyeRiflePatch
-	Apply-GameCompletionPatch
-	Apply-LandscapeTextures
-	Apply-MouseFix
-}
 
 function Install-GameCompletionPatch {
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
@@ -132,11 +153,11 @@ Function Install-MouseFix {
 	}
 }
 
-Function Uninstall-Patches {
-	Uninstall-MouseFix
-	Uninstall-Bullseye
-	Uninstall-GameCompletionPatch
-	Uninstall-DVXK
+Function Install-Patches {
+	Install-BullseyeRiflePatch
+	Install-GameCompletionPatch
+	Install-LandscapeTextures
+	Install-MouseFix
 }
 
 Function Uninstall-MouseFix {
@@ -209,32 +230,13 @@ function Uninstall-DVXK {
 	}
 }
 
-
-Function Install-IntoDropzone {
-	param(
-		[string]$modFolderLocation
-	)
-
-	# A very clear statement for handling the recursive tripped variable
-	if (-not (Get-Variable -Name 'tripped' -Scope 1)) {
-		$tripped = $false
-	}
-
-	$dropZonePath = $currentInstallPath + '\dropzone'
-	if ( Test-Path -Path $dropZonePath) {
-		Copy-Item $modFolderLocation\* $dropZonePath -Recurse
-		Write-Host 'Copied files'
-	}
-	else {
-		New-Item -ItemType 'directory' -Path $dropZonePath
-
-		# Lets not end up in an infinte loop, its not that deep brah
-		if (-not $tripped) {
-			$tripped = true
-			Install-IntoDropzone -modFolderLocation
-		}
-	}
+Function Uninstall-Patches {
+	Uninstall-MouseFix
+	Uninstall-Bullseye
+	Uninstall-GameCompletionPatch
+	Uninstall-DVXK
 }
+
 ### Mods
 
 Function Install-RebalancedMod {
