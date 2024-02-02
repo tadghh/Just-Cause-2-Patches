@@ -209,54 +209,6 @@ function Uninstall-DVXK {
 	}
 }
 
-function Show-PatchMenu {
-	Clear-Host
-	Write-Host '================ Patches ================'
-
-	Write-Host '1: Apply all.'
-	Write-Host '2: Apply Stability fixes (DXVK).'
-	Write-Host '3: Apply Mouse Fix.'
-	Write-Host '4: Apply 100% Completion Patch.'
-	Write-Host '5: Apply Bullseye Rifle Patch.'
-	Write-Host '6: Uninstall Bullseye Rifle fix.'
-	Write-Host '7: Uninstall Stability fixes (DXVK).'
-	Write-Host '8: Uninstall Mouse Fix.'
-	Write-Host '9: Uninstall 100% Completion Patch.'
-	Write-Host '0: Main menu.'
-	Write-Host "Press 'Q' to quit."
-}
-
-function Patch-Menu {
-	do {
-		Show-PatchMenu
-		$selection = Read-Host 'Please make a selection'
-		switch ($selection) {
-			'1' {
-				Install-Patches
-			} '2' {
-				Get-DXVK
-			} '3' {
-				Install-MouseFix
-			} '4' {
-				Install-GameCompletionPatch
-			} '5' {
-				Install-BullseyeRiflePatch
-			} '6' {
-				Uninstall-Bullseye
-			} '7' {
-				Uninstall-DVXK
-			} '8' {
-				Uninstall-MouseFix
-			} '9' {
-				Uninstall-100PFix
-			} default {
-				Open-MainMenu
-			}
-		}
-
-	}
-	until ($selection -eq 'q')
-}
 
 Function Install-IntoDropzone {
 	param(
