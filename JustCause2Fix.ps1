@@ -104,7 +104,7 @@ function Install-BullseyeRiflePatch {
 
 # Bokeh filter and GPU water simulation effects will become unavailable.
 # This should allow the "Decals" option to be enabled without crashes and overall makes the game less prone to crashing.
-Function Get-DXVK {
+Function Install-DXVK {
 	$latestReleaseApiUrl = 'https://api.github.com/repos/doitsujin/dxvk/releases/latest'
 	$latestRelease = Invoke-RestMethod -Uri $latestReleaseApiUrl
 	$tagName = $latestRelease.tag_name
@@ -347,7 +347,7 @@ function Select-MenuOption {
 
 $patchMenuItems = @(
 	@{ Title = 'Apply all.'; Action = { Install-Patches } },
-	@{ Title = 'Apply Stability fixes (DXVK).'; Action = { Get-DXVK } },
+	@{ Title = 'Apply Stability fixes (DXVK).'; Action = { Install-DXVK } },
 	@{ Title = 'Apply Mouse Fix.'; Action = { Install-MouseFix } },
 	@{ Title = 'Apply 100% Completion Patch.'; Action = { Install-GameCompletionPatch } },
 	@{ Title = 'Apply Bullseye Rifle Patch.'; Action = { Install-BullseyeRiflePatch } },
