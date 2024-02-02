@@ -288,6 +288,9 @@ Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
+
+## Menus
+
 function Show-Menu {
 	param (
 		[array]$MenuItems
@@ -340,7 +343,6 @@ function Select-MenuOption {
 
 }
 
-#
 $patchMenuItems = @(
 	@{ Title = 'Apply all.'; Action = { Install-Patches } },
 	@{ Title = 'Apply Stability fixes (DXVK).'; Action = { Get-DXVK } },
@@ -353,12 +355,17 @@ $patchMenuItems = @(
 	@{ Title = 'Uninstall 100% Completion Patch.'; Action = { Uninstall-GameCompletionPatch } },
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
 )
-#
+
 $mainMenuItems = @(
 	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems } },
 	@{ Title = 'Open mod menu.'; Action = { Write-Host 'I thinky this should be doing something' } }
 
 )
 
-# Call the function with the patch menu items
-Select-MenuOption -MenuItems $mainMenuItems
+if ($validInstallPath) {
+	Select-MenuOption -MenuItems $mainMenuItems
+}
+
+else {
+	Write-Host 'Menu not opened, JC2 install directory not found.'
+}
