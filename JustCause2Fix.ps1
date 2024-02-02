@@ -14,7 +14,9 @@ $exeName = 'JustCause2.exe'
 $defaultInstallDir = 'C:\Program Files (x86)\Steam\steamapps\common\Just Cause 2\'
 if ((Test-Path -Path ($defaultInstallDir + $exeName)) -or (Test-Path -Path ($CustomInstallLocation + $exeName)) ) {
 	$validInstallPath = $true
-	$currentInstallPath = (Test-Path -Path $defaultInstallDir )? $defaultInstallDir : $CustomInstallLocation
+
+	# Make sure the current install path is not just a root drive, container = 'directory' or 'folder
+	$currentInstallPath = (Test-Path -Path $defaultInstallDir  -PathType Container -IsValid )? $defaultInstallDir : $CustomInstallLocation
 }
 else {
 	Write-Host 'Did not find default install directory, please specify with the -CustomInstallLocation parameter'
@@ -127,7 +129,6 @@ Function Install-MouseFix {
 	if (Test-Path -Path $mouseAimFixFiles) {
 		Copy-Item $currentInstallPath\"PathEngine.dll" $currentInstallPath\"PathEngine_orig.dll"
 		Copy-Item $mouseAimFixFiles\* $currentInstallPath -Recurse
-		<# Action to perform if the condition is true #>
 	}
 }
 
@@ -336,32 +337,6 @@ Function Install-SkyRetexture {
 }
 
 
-
-##### Unused
-
-# The launch parameter can be used instead
-# function Remove-Filmgrain {
-# 	# Check for dropzone folder
-# 	$filmgrainPatch = $PSScriptRoot + '\Patches\Filmgrain'
-# 	if (!Test-Path -Path $currentInstallPath+"\dropzone" ) {
-# 		New-Item -ItemType 'directory' -Path $currentInstallPath+"\dropzone"
-# 		Write-Host 'Created dropzone folder'
-# 	}
-# 	if (Test-Path -Path $currentInstallPath+"\dropzone" ) {
-
-# 		Copy-Item $filmgrainPatch\"filmgrain.dds" $$currentInstallPath+"\dropzone" -Force
-# 		Write-Host 'Applied Filmgrain removal patch'
-# 	}
-
-# }
-# function Reapply-Filmgrain {
-# 	# Check for dropzone folder
-# 	if (Test-Path -Path $currentInstallPath+"\dropzone\filmgrain.dds" ) {
-# 		Remove-Item $currentInstallPath+"\dropzone\filmgrain.dds" -Force
-# 		Write-Host 'Applied Filmgrain removal patch'
-# 	}
-# }
-
 function Show-MainMenu {
 	param (
 		[string]$Title = 'Main'
@@ -394,4 +369,76 @@ function Open-MainMenu {
 }
 
 # Script 'entry point'
-Open-MainMenu
+#Open-MainMenu
+
+function Show-Menu {
+	param (
+		[array]$MenuItems
+	)
+
+	Clear-Host
+	Write-Host '================ Menu ================'
+
+	foreach ($menuItem in $MenuItems) {
+		$index = $MenuItems.IndexOf($menuItem) + 1
+		Write-Host "${index}: $($menuItem['Title'])"
+	}
+
+	Write-Host "Press 'Q' to quit."
+}
+
+function Select-MenuOption {
+	param (
+		[array]$MenuItems
+	)
+
+	$isFocused = $true
+	$index = 0
+	do {
+		Show-Menu -MenuItems $MenuItems
+		$selection = Read-Host 'Please make a selection'
+
+		if (($selection -eq 'q') ) { break }
+
+		$index = [int]$selection - 1
+
+		if ($index -ge 0 -and $index -lt $MenuItems.Count) {
+			if ($MenuItems[$index].title -eq 'Main menu.') {
+				$isFocused = $false
+			}
+			else {
+				& $MenuItems[$index].Action
+			}
+		}
+		else {
+			Write-Host 'Invalid selection. Please select a valid option.'
+			Start-Sleep -Seconds 2
+		}
+	} until (!$isFocused)
+
+	# fallout of loop for menus, still gotta call the action. Akin to a "trust fall"
+	$MenuItems[$index].Action
+}
+
+#
+$patchMenuItems = @(
+	@{ Title = 'Apply all.'; Action = { Install-Patches } },
+	@{ Title = 'Apply Stability fixes (DXVK).'; Action = { Get-DXVK } },
+	@{ Title = 'Apply Mouse Fix.'; Action = { Install-MouseFix } },
+	@{ Title = 'Apply 100% Completion Patch.'; Action = { Install-GameCompletionPatch } },
+	@{ Title = 'Apply Bullseye Rifle Patch.'; Action = { Install-BullseyeRiflePatch } },
+	@{ Title = 'Uninstall Bullseye Rifle fix.'; Action = { Uninstall-Bullseye } },
+	@{ Title = 'Uninstall Stability fixes (DXVK).'; Action = { Uninstall-DVXK } },
+	@{ Title = 'Uninstall Mouse Fix.'; Action = { Uninstall-MouseFix } },
+	@{ Title = 'Uninstall 100% Completion Patch.'; Action = { Uninstall-100PFix } },
+	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
+)
+#
+$mainMenuItems = @(
+	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems } },
+	@{ Title = 'Open mod menu.'; Action = { Write-Host 'I thinky this should be doing something' } }
+
+)
+
+# Call the function with the patch menu items
+Select-MenuOption -MenuItems $mainMenuItems
