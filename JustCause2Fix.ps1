@@ -219,6 +219,7 @@ Function Install-MouseFix {
 
 Function Install-Patches {
 	Install-BullseyeRiflePatch
+	Install-DXVK
 	Install-GameCompletionPatch
 	Install-LandscapeTextures
 	Install-MouseFix
