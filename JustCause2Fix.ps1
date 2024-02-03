@@ -471,9 +471,18 @@ $patchMenuItems = @(
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
 )
 
+$modMenuItems = @(
+	@{ Title = 'Apply Better Traffic.'; Action = { Install-BetterTraffic } },
+	@{ Title = 'Apply More Wildlife.'; Action = { Install-Wildlife } },
+	@{ Title = 'Apply Sky Retexture'; Action = { nstall-SkyRetexture } },
+	@{ Title = 'Apply Black Market Cutscene skip.'; Action = { Install-CutsceneBMSkip } },
+	@{ Title = 'Apply Rebalanced Overhaul'; Action = { Install-RebalancedMod } },
+	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
+)
+
 $mainMenuItems = @(
 	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems -MenuTitle 'Patches' } },
-	@{ Title = 'Open mod menu.'; Action = { Write-Host 'I thinky this should be doing something' } }
+	@{ Title = 'Open mod menu.'; Action = { Select-MenuOption -MenuItems $modMenuItems -MenuTitle 'Mods' } }
 
 )
 
