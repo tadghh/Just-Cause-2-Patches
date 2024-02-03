@@ -404,11 +404,12 @@ Function Install-SkyRetexture {
 
 function Show-Menu {
 	param (
-		[array]$MenuItems
+		[array]$MenuItems,
+		[string]$MenuTitle = 'Menu'
 	)
 
 	Clear-Host
-	Write-Host '================ Menu ================'
+	Write-Host "================ $MenuTitle ================"
 
 	foreach ($menuItem in $MenuItems) {
 		$index = $MenuItems.IndexOf($menuItem) + 1
@@ -420,13 +421,14 @@ function Show-Menu {
 
 function Select-MenuOption {
 	param (
-		[array]$MenuItems
+		[array]$MenuItems,
+		[string]$MenuTitle = 'Menu'
 	)
 
 	$isFocused = $true
 	$index = 0
 	do {
-		Show-Menu -MenuItems $MenuItems
+		Show-Menu -MenuItems $MenuItems -MenuTitle $MenuTitle
 		$selection = Read-Host 'Please make a selection'
 
 		if (($selection -eq 'q') ) { break }
@@ -455,6 +457,7 @@ function Select-MenuOption {
 }
 
 $patchMenuItems = @(
+
 	@{ Title = 'Apply all.'; Action = { Install-Patches } },
 	@{ Title = 'Apply Stability fixes (DXVK).'; Action = { Install-DXVK } },
 	@{ Title = 'Apply Mouse Fix.'; Action = { Install-MouseFix } },
@@ -469,13 +472,13 @@ $patchMenuItems = @(
 )
 
 $mainMenuItems = @(
-	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems } },
+	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems -MenuTitle 'Patches' } },
 	@{ Title = 'Open mod menu.'; Action = { Write-Host 'I thinky this should be doing something' } }
 
 )
 
 if ($validInstallPath) {
-	Select-MenuOption -MenuItems $mainMenuItems
+	Select-MenuOption -MenuItems $mainMenuItems -MenuTitle 'Main Menu'
 }
 
 else {
