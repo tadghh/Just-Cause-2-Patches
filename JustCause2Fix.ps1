@@ -394,13 +394,13 @@ Function Install-SkyRetexture {
 # only enable decals when dxck
 # User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
 $userLaunchParameters = @{
-	LODFactor    = 1
-	VSync        = 0
-	frameratecap = 60
+	decals       = 1
 	dxadapter    = 0
 	FilmGrain    = 1
 	fovfactor    = 1.0
-	decals       = 1
+	frameratecap = 60
+	LODFactor    = 1
+	VSync        = 0
 }
 
 
@@ -471,7 +471,7 @@ Function Show-Menu {
 	$menuOutput = "================ $MenuTitle ================`n"
 	foreach ($menuItem in $MenuItems) {
 		$index = $MenuItems.IndexOf($menuItem) + 1
-		$menuOutput += "${index}: $($menuItem['Title'])`n"
+		$menuOutput += "${index}: $($menuItem.Title)`n"
 	}
 	$menuOutput += "Press 'Q' to quit.`n"
 
@@ -479,7 +479,25 @@ Function Show-Menu {
 	Clear-Host
 	Write-Host $menuOutput
 }
+Function Show-CurrentLaunchOptionsStatus {
+	Write-Host 'Current launch settings:'
+	$maxKeyLength = ($userLaunchParameters.Keys | Measure-Object -Property Length -Maximum).Maximum
 
+	foreach ($key in $userLaunchParameters.Keys) {
+		$padding = ' ' * ($maxKeyLength - $key.Length)
+		Write-Host "$key$padding" -NoNewline
+	}
+
+	# Move to new line
+	Write-Host
+
+	foreach ($value in $userLaunchParameters.Values) {
+		$padding = ' ' * ($maxKeyLength - $value.ToString().Length)
+		Write-Host "$value$padding" -NoNewline
+	}
+	# Move to new line
+	Write-Host
+}
 Function Select-MenuOption {
 	param (
 		[array]$MenuItems,
@@ -490,7 +508,14 @@ Function Select-MenuOption {
 	$index = 0
 	do {
 		Show-Menu -MenuItems $MenuItems -MenuTitle $MenuTitle
+
+		# TODO: No hardcoding
+		if ($MenuTitle -eq 'Launch Parameters') {
+			Show-CurrentLaunchOptionsStatus
+		}
+
 		$selection = Read-Host 'Please make a selection'
+
 
 		if (($selection -eq 'q') ) { break }
 
@@ -521,10 +546,7 @@ Function Select-MenuOption {
 
 $launchItems = @(
 	@{ Title = 'Enable/Disable decals'; Action = { Set-Decals } },
-	@{ Title = 'Enable/Disable filmgrain ' + $userLaunchParameters.FilmGrain
-		Action  = { Set-FilmGrain
-		 Select-MenuOption -MenuItems $launchItems -MenuTitle 'Launch Parameters' }
- },
+	@{ Title = 'Enable/Disable filmgrain'; Action = { Set-FilmGrain } },
 	@{ Title = 'Set LOD Factor'; Action = { Set-LODFactor } },
 	@{ Title = 'Set FOV'; Action = { Set-FOV } },
 	@{ Title = 'Show Launch Options'; Action = { Show-LaunchOptions } },
