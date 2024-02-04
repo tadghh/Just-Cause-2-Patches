@@ -401,11 +401,8 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-function Set-LODFactor {
-	param (
-		[int]$lodFactor = $userLaunchParameters.LODFactor
-	)
 
+function Set-LODFactor {
 	do {
 		Write-Host 'Please enter a number between 0 - 3 (closest, furthest), or "q" to quit:'
 
@@ -492,7 +489,7 @@ Function Select-MenuOption {
 $launchItems = @(
 	@{ Title = 'Enable decals'; Action = { Install-BetterTraffic } },
 	@{ Title = 'Disable V-Sync.'; Action = { Install-Wildlife } },
-	@{ Title = 'LOD Factor (Draw distance) 1-3'; Action = { Install-SkyRetexture } },
+	@{ Title = 'LOD Factor'; Action = { Set-LODFactor } },
 	@{ Title = 'Disable Film Grain.'; Action = { Install-CutsceneBMSkip } },
 	@{ Title = 'FOV'; Action = { Install-RebalancedMod } },
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
