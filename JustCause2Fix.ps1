@@ -398,7 +398,7 @@ $userLaunchParameters = @{
 	VSync        = 0
 	frameratecap = 60
 	dxadapter    = 0
-	FilmGrain    = 0
+	FilmGrain    = 1
 	fovfactor    = 1.0
 	decals       = 1
 }
@@ -407,6 +407,7 @@ $userLaunchParameters = @{
 function Set-FilmGrain {
 	$userLaunchParameters.FilmGrain = ($userLaunchParameters.FilmGrain -eq 1) ? 0 : 1
 }
+
 
 function Set-Decals {
 	$userLaunchParameters.decals = ($userLaunchParameters.decals -eq 1) ? 0 : 1
@@ -458,25 +459,25 @@ function Set-FOV {
 
 Function Show-LaunchOptions {
 	Write-Host $userLaunchParameters
-	Read-Host 'demo'
 }
 ## Menus
-
 Function Show-Menu {
 	param (
 		[array]$MenuItems,
 		[string]$MenuTitle = 'Menu'
 	)
 
-	Clear-Host
-	Write-Host "================ $MenuTitle ================"
-
+	# Build menu output
+	$menuOutput = "================ $MenuTitle ================`n"
 	foreach ($menuItem in $MenuItems) {
 		$index = $MenuItems.IndexOf($menuItem) + 1
-		Write-Host "${index}: $($menuItem['Title'])"
+		$menuOutput += "${index}: $($menuItem['Title'])`n"
 	}
+	$menuOutput += "Press 'Q' to quit.`n"
 
-	Write-Host "Press 'Q' to quit."
+	# Clear host and display menu output
+	Clear-Host
+	Write-Host $menuOutput
 }
 
 Function Select-MenuOption {
@@ -507,6 +508,7 @@ Function Select-MenuOption {
 			Write-Host 'Invalid selection. Please select a valid option.'
 			Start-Sleep -Seconds 2
 		}
+
 	} until (!$isFocused)
 
 	# fallout of loop for menus, still gotta call the action. Akin to a "trust fall"
@@ -518,8 +520,11 @@ Function Select-MenuOption {
 ## Menu items
 
 $launchItems = @(
-	@{ Title = 'Enable decals status'; Action = { Set-Decals } },
-	@{ Title = "Enable filmgrain status:${$userLaunchParameters.decals ? 'enabled' : 'disabled'}"; Action = { Set-FilmGrain } },
+	@{ Title = 'Enable/Disable decals'; Action = { Set-Decals } },
+	@{ Title = 'Enable/Disable filmgrain ' + $userLaunchParameters.FilmGrain
+		Action  = { Set-FilmGrain
+		 Select-MenuOption -MenuItems $launchItems -MenuTitle 'Launch Parameters' }
+ },
 	@{ Title = 'Set LOD Factor'; Action = { Set-LODFactor } },
 	@{ Title = 'Set FOV'; Action = { Set-FOV } },
 	@{ Title = 'Show Launch Options'; Action = { Show-LaunchOptions } },
