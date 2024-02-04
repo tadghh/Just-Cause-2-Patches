@@ -160,17 +160,6 @@ Function Install-IntoDropzone {
 		}
 	}
 }
-# only enable decals when dxck
-# User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
-$userLaunchParameters = @{
-	LODFactor    = 1
-	VSync        = 0
-	frameratecap = 60
-	dxadapter    = 0
-	FilmGrain    = 0
-	fovfactor    = 1.0
-	decals       = 0
-}
 
 Function Install-GameCompletionPatch {
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
@@ -453,6 +442,29 @@ Function Select-MenuOption {
 	}
 }
 
+# only enable decals when dxck
+# User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
+$userLaunchParameters = @{
+	LODFactor    = 1
+	VSync        = 0
+	frameratecap = 60
+	dxadapter    = 0
+	FilmGrain    = 0
+	fovfactor    = 1.0
+	decals       = 0
+}
+
+## Menu items
+
+$launchItems = @(
+	@{ Title = 'Enable decals'; Action = { Install-BetterTraffic } },
+	@{ Title = 'Disable V-Sync.'; Action = { Install-Wildlife } },
+	@{ Title = 'LOD Factor (Draw distance) 1-3'; Action = { Install-SkyRetexture } },
+	@{ Title = 'Disable Film Grain.'; Action = { Install-CutsceneBMSkip } },
+	@{ Title = 'FOV'; Action = { Install-RebalancedMod } },
+	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
+)
+
 $patchMenuItems = @(
 
 	@{ Title = 'Apply all.'; Action = { Install-Patches } },
@@ -468,6 +480,7 @@ $patchMenuItems = @(
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
 )
 
+
 $modMenuItems = @(
 	@{ Title = 'Apply Better Traffic.'; Action = { Install-BetterTraffic } },
 	@{ Title = 'Apply More Wildlife.'; Action = { Install-Wildlife } },
@@ -479,7 +492,8 @@ $modMenuItems = @(
 
 $mainMenuItems = @(
 	@{ Title = 'Open patch menu.'; Action = { Select-MenuOption -MenuItems $patchMenuItems -MenuTitle 'Patches' } },
-	@{ Title = 'Open mod menu.'; Action = { Select-MenuOption -MenuItems $modMenuItems -MenuTitle 'Mods' } }
+	@{ Title = 'Open mod menu.'; Action = { Select-MenuOption -MenuItems $modMenuItems -MenuTitle 'Mods' } },
+	@{ Title = 'Open launch parameter menu.'; Action = { Select-MenuOption -MenuItems $launchItems -MenuTitle 'Launch Parameters' } }
 
 )
 
