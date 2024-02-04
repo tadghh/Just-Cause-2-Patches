@@ -402,6 +402,10 @@ $userLaunchParameters = @{
 }
 
 
+function Set-Decals {
+	$userLaunchParameters.decals = ($userLaunchParameters.decals -eq 1) ? 0 : 1
+}
+
 function Set-LODFactor {
 	do {
 		Write-Host 'Please enter a number between 0 - 3 (closest, furthest), or "q" to quit:'
@@ -487,7 +491,7 @@ Function Select-MenuOption {
 ## Menu items
 
 $launchItems = @(
-	@{ Title = 'Enable decals'; Action = { Install-BetterTraffic } },
+	@{ Title = "Enable decals status: ${$userLaunchParameters.decals ? 'enabled' : 'disabled'}"; Action = { Set-Decals } },
 	@{ Title = 'Disable V-Sync.'; Action = { Install-Wildlife } },
 	@{ Title = 'LOD Factor'; Action = { Set-LODFactor } },
 	@{ Title = 'Disable Film Grain.'; Action = { Install-CutsceneBMSkip } },
