@@ -458,12 +458,14 @@ function Set-FOV {
 }
 
 Function Show-LaunchOptions {
+	Clear-Host
 	Write-Host 'Copy and paste the following as launch paramters in Steam or others.'
-	Write-Host
+	Write-Host 'Steam -> Just Cause 2 -> Properties -> General -> Launch Options'`n
+
 	foreach ($key in $userLaunchParameters.Keys) {
-		Write-Host "/$key=$($userLaunchParameters[$key])" -NoNewline
+		Write-Host "/$key=$($userLaunchParameters[$key]) " -NoNewline
 	}
-	Write-Host
+	Write-Host `n
 	Pause
 }
 ## Menus
