@@ -487,22 +487,14 @@ Function Show-Menu {
 	Clear-Host
 	Write-Host $menuOutput
 }
-Function Print-KeyValuePairs {
-	param (
-		[hashtable]$KeyValuePairs
-	)
 
-	foreach ($key in $KeyValuePairs.Keys) {
-		Write-Host "/$key=$($KeyValuePairs[$key])" -NoNewline
-	}
-}
 Function Show-CurrentLaunchOptionsStatus {
 	Write-Host 'Current launch settings:'
 	$maxKeyLength = ($userLaunchParameters.Keys | Measure-Object -Property Length -Maximum).Maximum
 
 	foreach ($key in $userLaunchParameters.Keys) {
 		$padding = ' ' * ($maxKeyLength - $key.Length)
-		Write-Host "$key$padding" -NoNewline
+		Write-Host " $key$padding" -NoNewline
 	}
 
 	# Move to new line
