@@ -387,6 +387,49 @@ Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
+## Launch functions
+
+# only enable decals when dxck
+# User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
+$userLaunchParameters = @{
+	LODFactor    = 1
+	VSync        = 0
+	frameratecap = 60
+	dxadapter    = 0
+	FilmGrain    = 0
+	fovfactor    = 1.0
+	decals       = 0
+}
+
+function Set-LODFactor {
+	param (
+		[int]$lodFactor = $userLaunchParameters.LODFactor
+	)
+
+	do {
+		Write-Host 'Please enter a number between 0 - 3 (closest, furthest), or "q" to quit:'
+
+		# Prompt the user for input
+		$input = Read-Host 'Enter LOD:'
+
+		if ($input -eq 'q') {
+			Write-Host 'Exiting...'
+			return
+		}
+
+		# Validate input
+		if ($input -match '^\d+$' -and $input -ge 0 -and $input -le 3) {
+			$userLaunchParameters.LODFactor = [int]$input
+			Write-Host "LOD Factor set to $($userLaunchParameters.LODFactor)"
+			return
+		}
+		else {
+			# If input is invalid, display an error message and continue the loop
+			Write-Host "Invalid input. Please enter a number between 0 and 3, or 'q' to quit."
+		}
+	} while ($true)
+}
+
 ## Menus
 
 Function Show-Menu {
@@ -442,17 +485,7 @@ Function Select-MenuOption {
 	}
 }
 
-# only enable decals when dxck
-# User needs to add these to steam or launch with a shortcut/ Justcause.exe /commands here
-$userLaunchParameters = @{
-	LODFactor    = 1
-	VSync        = 0
-	frameratecap = 60
-	dxadapter    = 0
-	FilmGrain    = 0
-	fovfactor    = 1.0
-	decals       = 0
-}
+
 
 ## Menu items
 
