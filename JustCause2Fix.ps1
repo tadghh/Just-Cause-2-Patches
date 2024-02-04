@@ -493,16 +493,18 @@ Function Show-CurrentLaunchOptionsStatus {
 	$maxKeyLength = ($userLaunchParameters.Keys | Measure-Object -Property Length -Maximum).Maximum
 
 	foreach ($key in $userLaunchParameters.Keys) {
-		$padding = ' ' * ($maxKeyLength - $key.Length)
-		Write-Host " $key$padding" -NoNewline
+
+		Write-Host "$key " -NoNewline
 	}
 
 	# Move to new line
 	Write-Host
-
-	foreach ($value in $userLaunchParameters.Values) {
-		$padding = ' ' * ($maxKeyLength - $value.ToString().Length)
-		Write-Host "$value$padding" -NoNewline
+	$index = 0
+	foreach ($entry in $userLaunchParameters.GetEnumerator()) {
+		$index++
+		$paddingTotal = $entry.Key.ToString().Length - 1
+		$padding = ' ' * ($paddingTotal)
+		Write-Host $entry.Value$padding -NoNewline
 	}
 	# Move to new line
 	Write-Host
