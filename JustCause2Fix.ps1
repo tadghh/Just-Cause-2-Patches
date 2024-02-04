@@ -458,7 +458,13 @@ function Set-FOV {
 }
 
 Function Show-LaunchOptions {
-	Write-Host $userLaunchParameters
+	Write-Host 'Copy and paste the following as launch paramters in Steam or others.'
+	Write-Host
+	foreach ($key in $userLaunchParameters.Keys) {
+		Write-Host "/$key=$($userLaunchParameters[$key])" -NoNewline
+	}
+	Write-Host
+	Pause
 }
 ## Menus
 Function Show-Menu {
@@ -478,6 +484,15 @@ Function Show-Menu {
 	# Clear host and display menu output
 	Clear-Host
 	Write-Host $menuOutput
+}
+Function Print-KeyValuePairs {
+	param (
+		[hashtable]$KeyValuePairs
+	)
+
+	foreach ($key in $KeyValuePairs.Keys) {
+		Write-Host "/$key=$($KeyValuePairs[$key])" -NoNewline
+	}
 }
 Function Show-CurrentLaunchOptionsStatus {
 	Write-Host 'Current launch settings:'
