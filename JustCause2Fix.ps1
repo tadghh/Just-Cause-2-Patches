@@ -4,13 +4,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# Used to keep track of directory
+# Used to keep track of game directory
 $currentInstallPath = $null
 $validInstallPath = $false
 
-$exeName = 'JustCause2.exe'
 
-# Default install directory
+# Determine the install directory
+$exeName = 'JustCause2.exe'
 $defaultInstallDir = 'C:\Program Files (x86)\Steam\steamapps\common\Just Cause 2\'
 if ((Test-Path -Path ($defaultInstallDir + $exeName)) -or (Test-Path -Path ($CustomInstallLocation + $exeName)) ) {
 	$validInstallPath = $true
@@ -24,7 +24,7 @@ else {
 
 ## Utility
 
-function Test-InstallDir {
+Function Test-InstallDir {
  Write-Host 'Current game install status:'($validInstallPath ? ("found at $currentInstallPath") : 'not found :(')
 }
 
@@ -172,8 +172,7 @@ $userLaunchParameters = @{
 	decals       = 0
 }
 
-
-function Install-GameCompletionPatch {
+Function Install-GameCompletionPatch {
 	$gameCompletionPatches = $PSScriptRoot + '\Patches\Completion'
 	if (Test-Path -Path $gameCompletionPatches -and Test-Path -Path $currentInstallPath+"\archives_win32") {
 		Copy-Item $gameCompletionPatches\* $currentInstallPath"\archives_32" -Recurse
@@ -184,7 +183,7 @@ function Install-GameCompletionPatch {
 	}
 }
 
-function Install-BullseyeRiflePatch {
+Function Install-BullseyeRiflePatch {
 	$weaponPatches = $PSScriptRoot + '\Patches\Bullseye Rifle Fix'
 
 	# Bullseye Rifle
@@ -319,7 +318,7 @@ Function Uninstall-Bullseye {
 	}
 }
 
-function Uninstall-DVXK {
+Function Uninstall-DVXK {
 	$filesToRemove = @(
 		'dxgi.dll',
 		'd3d11.dll',
@@ -373,7 +372,7 @@ Function Install-BetterTraffic {
 	Install-IntoDropzone $PSScriptRoot + '\Mods\Better Traffic'
 }
 
-function Install-Wildlife {
+Function Install-Wildlife {
 	param(
 		[int]$amount
 	)
@@ -386,7 +385,7 @@ function Install-Wildlife {
 	Install-IntoDropzone "$PSScriptRoot\Mods\More Wildlife\$response"
 }
 
-function Install-CutsceneBMSkip {
+Function Install-CutsceneBMSkip {
 	if (Test-Path -Path $CustomInstallLocation+"\dropzone\serviceMods") {
 		Write-Host 'Rebalanced Black Market skip is installed. Skipping.'
 	}
@@ -399,10 +398,9 @@ Function Install-SkyRetexture {
 	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
 }
 
-
 ## Menus
 
-function Show-Menu {
+Function Show-Menu {
 	param (
 		[array]$MenuItems,
 		[string]$MenuTitle = 'Menu'
@@ -419,7 +417,7 @@ function Show-Menu {
 	Write-Host "Press 'Q' to quit."
 }
 
-function Select-MenuOption {
+Function Select-MenuOption {
 	param (
 		[array]$MenuItems,
 		[string]$MenuTitle = 'Menu'
@@ -453,7 +451,6 @@ function Select-MenuOption {
 	if (!$isFocused) {
 		$MenuItems[$index].Action
 	}
-
 }
 
 $patchMenuItems = @(
@@ -489,7 +486,6 @@ $mainMenuItems = @(
 if ($validInstallPath) {
 	Select-MenuOption -MenuItems $mainMenuItems -MenuTitle 'Main Menu'
 }
-
 else {
 	Write-Host 'Menu not opened, JC2 install directory not found.'
 }
