@@ -4,6 +4,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+$lastMessage = 'Nothing'
+
 # Used to keep track of game directory
 $currentInstallPath = $null
 $validInstallPath = $false
@@ -398,9 +400,13 @@ $userLaunchParameters = @{
 	dxadapter    = 0
 	FilmGrain    = 0
 	fovfactor    = 1.0
-	decals       = 0
+	decals       = 1
 }
 
+
+function Set-FilmGrain {
+	$userLaunchParameters.FilmGrain = ($userLaunchParameters.FilmGrain -eq 1) ? 0 : 1
+}
 
 function Set-Decals {
 	$userLaunchParameters.decals = ($userLaunchParameters.decals -eq 1) ? 0 : 1
@@ -413,10 +419,7 @@ function Set-LODFactor {
 		# Prompt the user for input
 		$input = Read-Host 'Enter LOD:'
 
-		if ($input -eq 'q') {
-			Write-Host 'Exiting...'
-			return
-		}
+		if ($input -eq 'q') { return }
 
 		# Validate input
 		if ($input -match '^\d+$' -and $input -ge 0 -and $input -le 3) {
@@ -431,6 +434,32 @@ function Set-LODFactor {
 	} while ($true)
 }
 
+function Set-FOV {
+	do {
+		Write-Host 'Please enter a number between 1 - 2 (this translates to 100-200, ex 1.1 = 110), or "q" to quit:'
+
+		# Prompt the user for input
+		$input = Read-Host 'Enter FOV:'
+
+		if ($input -eq 'q') { return }
+
+		# Validate input
+		if ($input -match '^\d+(\.\d+)?$' -and $input -ge 1 -and $input -le 2) {
+			$userLaunchParameters.fovfactor = [float]$input
+			Write-Host "FOV set to $($userLaunchParameters.FOV * 100)"
+			return
+		}
+		else {
+			# If input is invalid, display an error message and continue the loop
+			Write-Host "Invalid input. Please enter a number between 1 and 2, or 'q' to quit."
+		}
+	} while ($true)
+}
+
+Function Show-LaunchOptions {
+	Write-Host $userLaunchParameters
+	Read-Host 'demo'
+}
 ## Menus
 
 Function Show-Menu {
@@ -486,16 +515,14 @@ Function Select-MenuOption {
 	}
 }
 
-
-
 ## Menu items
 
 $launchItems = @(
-	@{ Title = "Enable decals status: ${$userLaunchParameters.decals ? 'enabled' : 'disabled'}"; Action = { Set-Decals } },
-	@{ Title = 'Disable V-Sync.'; Action = { Install-Wildlife } },
-	@{ Title = 'LOD Factor'; Action = { Set-LODFactor } },
-	@{ Title = 'Disable Film Grain.'; Action = { Install-CutsceneBMSkip } },
-	@{ Title = 'FOV'; Action = { Install-RebalancedMod } },
+	@{ Title = 'Enable decals status'; Action = { Set-Decals } },
+	@{ Title = "Enable filmgrain status:${$userLaunchParameters.decals ? 'enabled' : 'disabled'}"; Action = { Set-FilmGrain } },
+	@{ Title = 'Set LOD Factor'; Action = { Set-LODFactor } },
+	@{ Title = 'Set FOV'; Action = { Set-FOV } },
+	@{ Title = 'Show Launch Options'; Action = { Show-LaunchOptions } },
 	@{ Title = 'Main menu.'; Action = { Select-MenuOption -MenuItems $mainMenuItems } }
 )
 
