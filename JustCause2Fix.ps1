@@ -418,7 +418,7 @@ function Set-LODFactor {
 		Write-Host 'Please enter a number between 0 - 3 (closest, furthest), or "q" to quit:'
 
 		# Prompt the user for input
-		$input = Read-Host 'Enter LOD:'
+		$input = Read-Host 'Enter LOD'
 
 		if ($input -eq 'q') { return }
 
@@ -440,7 +440,7 @@ function Set-FOV {
 		Write-Host 'Please enter a number between 1 - 2 (this translates to 100-200, ex 1.1 = 110), or "q" to quit:'
 
 		# Prompt the user for input
-		$input = Read-Host 'Enter FOV:'
+		$input = Read-Host 'Enter FOV'
 
 		if ($input -eq 'q') { return }
 
