@@ -49,7 +49,7 @@ Using with a default(steam) install.
 .\JustCause2Fix.ps1
 ```
 
-> [!TIP]
+> [!NOTE]
 > The above commands are assuming your are in the directory of the extracted zip file from this repository.
 
 > [!TIP]
