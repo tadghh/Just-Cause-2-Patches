@@ -51,6 +51,7 @@ Using with a default(steam) install.
 
 > [!TIP]
 > The above commands are assuming your are in the directory of the extracted zip file from this repository.
+
 > [!TIP]
 > Here is a [guide](https://superuser.com/a/106363) explaining how to run PS scripts.
 
