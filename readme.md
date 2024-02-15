@@ -31,17 +31,28 @@ This PowerShell script was created to easily patch/fix issues in Just Cause 2. I
 > Make sure to add the generated launch parameters in steam, this can also be done per this [guide](https://www.digitalcitizen.life/shortcut-arguments-parameters-windows/)
 
 > [!WARNING]
-> Beware, bugs may occur
+> Beware, bugs may occur.
 
 ### Example
 
 Providing a custom install directory.
 
-```
+```pwsh
 .\JustCause2Fix.ps1 -CustomInstallLocation 'C:\Path\to\folder\JustCause2\'
 #or
 .\JustCause2Fix.ps1 'C:\Path\to\folder\JustCause2\'
 ```
+
+Using with a default(steam) install.
+
+```pwsh
+.\JustCause2Fix.ps1
+```
+
+> [!TIP]
+> The above commands are assuming your are in the directory of the extracted zip file from this repository.
+> [!TIP]
+> Here is a [guide](https://superuser.com/a/106363) explaining how to run PS scripts.
 
 ### Credits
 
