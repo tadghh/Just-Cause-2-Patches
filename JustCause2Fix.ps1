@@ -386,7 +386,7 @@ Function Install-CutsceneBMSkip {
 }
 
 Function Install-SkyRetexture {
-	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skys"
+	Install-IntoDropzone "$PSScriptRoot\Mods\Realistic Skies"
 }
 
 ## Launch functions
